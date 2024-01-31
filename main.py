@@ -17,7 +17,7 @@ def title():
 
 def price():
     price_element = soup.find_all('p', {'data-testid': 'ad-price', 'class': 'css-10b0gli er34gjf0'})
-    prices = [price.text for price in price_element]
+    prices = [price.text.split('zł')[0]for price in price_element]
     return prices
 
 
@@ -29,8 +29,14 @@ def loc():
 
 def area():
     area_element = soup.find_all('span', {'class': 'css-643j0o'})
-    areas = [(area.text.split('-')[0], area.text.split('-')[1] if len(area.text.split('-')) > 1 else None) for area in area_element]
+    areas = [area.text.split('-')[0].split('m')[0] for area in area_element]
     return areas
+
+
+def url_site():
+    links_element = soup.find_all('a', class_='css-rc5s2u')
+    links = [link.get('href') for link in links_element]
+    return links
 
 
 csv_file_name = "olx_data.csv"
@@ -38,7 +44,7 @@ csv_file_name = "olx_data.csv"
 with open(csv_file_name, 'w', newline='', encoding='utf=8') as csv_file:
 
     csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['Title', 'Price', 'Location', 'Area'])
+    csv_writer.writerow(['Title', 'Price[PLN]', 'Location', 'Area[m2]', 'URL'])
 
     page_number = 1
 
@@ -62,9 +68,10 @@ with open(csv_file_name, 'w', newline='', encoding='utf=8') as csv_file:
             prices = price()
             addresses = loc()
             areas = area()
+            links = url_site()
 
             for i in range(len(titles)):
-                csv_writer.writerow([titles[i], prices[i], addresses[i], areas[i]])
+                csv_writer.writerow([titles[i], prices[i], addresses[i], areas[i], links[i]])
 
             time.sleep(1)
             page_number += 1
