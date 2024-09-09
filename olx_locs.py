@@ -1,3 +1,5 @@
+base_olx_url = "https://www.olx.pl/nieruchomosci/biura-lokale/sprzedaz/"
+
 olx_locations = {
     "warszawa": {
         "path": "warszawa",

@@ -155,7 +155,3 @@ locations_otodom = {
         }
     }
 }
-
-
-for location, data in locations_otodom.items():
-    full_url = f"{base_otodom_url}{data['path']}?{urlencode(data['params'])}"

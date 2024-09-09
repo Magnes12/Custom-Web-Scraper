@@ -3,7 +3,7 @@ import sys
 import requests
 import openpyxl
 import time
-from olx_locs import olx_locations
+from olx_locs import olx_locations, base_olx_url
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlencode
 
@@ -63,7 +63,7 @@ def main():
     excel_file = "LOKALE.xlsx"
     wb, sheet = create_excel(excel_file)
 
-    base_url = "https://www.olx.pl/nieruchomosci/biura-lokale/sprzedaz/"
+    base_url = base_olx_url
 
     previous_url = None
     row_number = 2
