@@ -64,13 +64,13 @@ def url_site(soup):
 def get_next_page(soup):
     pagination = soup.find('ul', {'data-cy': 'frontend.search.base-pagination.nexus-pagination'})
     if not pagination:
-        print("Brak kolejnej strony. Zakończono przetwarzanie.")
+        print("Brak kolejnej strony. Zakończono przetwarzanie.\n")
         return False
 
     next_page = soup.find('li', {'aria-disabled': 'true',
                                  'title': 'Go to next Page'})
     if next_page:
-        print("Brak kolejnej strony. Zakończono przetwarzanie.")
+        print("Brak kolejnej strony. Zakończono przetwarzanie.\n")
         return False
 
     return True
