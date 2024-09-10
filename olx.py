@@ -11,7 +11,7 @@ from urllib.parse import urljoin, urlencode
 def create_excel(file_name):
     wb = openpyxl.Workbook()
     sheet = wb.active
-    sheet.title = 'LOKALE'
+    sheet.title = 'OLX'
 
     sheet['A1'] = 'Tytuł'
     sheet['B1'] = 'Cena [zł]'
@@ -24,32 +24,32 @@ def create_excel(file_name):
 
 
 def title(soup):
-    title_element = soup.find_all('h6')
+    title_element = soup.find_all('h6', {'class': 'css-1wxaaza'})
+    print(f"Znaleziono {len(title_element)} ogłoszeń")
     return [title.text for title in title_element]
 
 
 def price(soup):
     price_element = soup.find_all('p', {'data-testid': 'ad-price',
                                         'class': 'css-13afqrm'})
-    return [price.text.split('zł')[0] for price in price_element]
+    return [price.text.split('zł')[0] if 'zł' in price.text else price.text for price in price_element]
 
 
 def loc(soup):
     localization_element = soup.find_all('p', {'data-testid': 'location-date',
                                                'class': 'css-1mwdrlh'})
-    return [loc.text.split('-')[0] for loc in localization_element]
+    return [loc.text.split('-')[0] for loc in localization_element if loc]
 
 
 def area(soup):
     area_element = soup.find_all('span', {'class': 'css-643j0o'})
-    return [area.text.split('-')[0].split('m')[0] for area in area_element]
+    return [area.text.split('-')[0].split('m')[0] if 'm' in area.text else '' for area in area_element]
 
 
 def url_site(soup):
-    links_element = soup.find_all('a', class_='css-z3gu2d')
-    links = [link.get('href') for link in links_element if link.get('href')]
-    unique_links = list(dict.fromkeys(links))
-    return unique_links
+    links_element = soup.find_all('div', {'data-cy': 'ad-card-title'})
+    links = [div.find('a').get('href') for div in links_element if div.find('a')]
+    return links
 
 
 def get_next_page_url(soup):
@@ -59,7 +59,7 @@ def get_next_page_url(soup):
     return None
 
 
-def main():
+def olx_main():
     excel_file = "LOKALE.xlsx"
     wb, sheet = create_excel(excel_file)
 
@@ -67,6 +67,8 @@ def main():
 
     previous_url = None
     row_number = 2
+
+    print("OGŁOSZENIA OLX")
 
     for location, data in olx_locations.items():
         full_url = f"{base_url}{data['path']}?{urlencode(data['params'])}"
@@ -80,17 +82,18 @@ def main():
                 sys.exit()
 
             response_url = response.url
-            print(response_url)
 
             soup = BeautifulSoup(response.text, 'html.parser')
-            next_page_url = get_next_page_url(soup)
 
             time.sleep(1)
 
-            if previous_url == response_url or not next_page_url:
+            if previous_url == response_url:
 
-                print("Brak kolejnej strony. Zakończono przetwarzanie.")
+                print("Brak kolejnej strony. Zakończono przetwarzanie.\n")
                 break
+
+            print(f"Lokalizacja: {location}")
+            print(f"Strona: {response_url}")
 
             title_text = title(soup)
             price_text = price(soup)
@@ -118,14 +121,18 @@ def main():
                 row_number += 1
 
             previous_url = response_url
+
+            next_page_url = get_next_page_url(soup)
+
+            if not next_page_url:
+                print(f"Brak kolejnej strony dla lokalizacji: {location}.\n")
+                break
+
             full_url = next_page_url
 
-        wb.save(excel_file)
-        print(f"Excel zapisany dla lokalizacji: {location}\n")
-
-    if sys.platform == "win32":
-        os.startfile(excel_file)
+    wb.save(excel_file)
+    print("Excel zapisany dla wszystkich lokalizacji OLX.\n")
 
 
 if __name__ == "__main__":
-    main()
+    olx_main()
