@@ -1,95 +1,20 @@
-base_olx_url = "https://www.olx.pl/nieruchomosci/biura-lokale/sprzedaz/"
+base_olx_url_sale = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/"
+base_olx_url_rent = "https://www.olx.pl/nieruchomosci/mieszkania/wynajem/"
 
-olx_locations = {
+olx_locations_sale = {
     "warszawa": {
         "path": "warszawa",
         "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
+            'search[filter_float_m:from]': '50'
         }
-    },
-    "grodzisk_mazowiecki": {
-        "path": "grodzisk-mazowiecki",
+    }
+}
+olx_locations_rent = {
+    "warszawa": {
+        "path": "warszawa",
         "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "zyrardow": {
-        "path": "zyrardow",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "pruszkow": {
-        "path": "pruszkow",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "piastow": {
-        "path": "piastow",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "ozarow_mazowiecki": {
-        "path": "ozarow-mazowiecki",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "oltarzew": {
-        "path": "oltarzew",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "skierniewice": {
-        "path": "skierniewice",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "nowy_dwor_mazowiecki": {
-        "path": "nowy-dwor-mazowiecki",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "piaseczno": {
-        "path": "piaseczno",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "plock": {
-        "path": "plock",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "legionowo": {
-        "path": "legionowo",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
-        }
-    },
-    "lomianki": {
-        "path": "lomianki",
-        "params": {
-            'search[dist]': '5',
-            'search[filter_float_price:to]': '750000'
+            'search[filter_float_m:from]': '50',
+            'search[filter_float_price:to]': '12000'
         }
     }
 }

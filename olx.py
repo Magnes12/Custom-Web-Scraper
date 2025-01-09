@@ -3,7 +3,7 @@ import sys
 import requests
 import openpyxl
 import time
-from olx_locs import olx_locations, base_olx_url
+from olx_locs import olx_locations_rent, base_olx_url_rent, olx_locations_sale, base_olx_url_sale
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlencode
 
@@ -11,7 +11,7 @@ from urllib.parse import urljoin, urlencode
 def create_excel(file_name):
     wb = openpyxl.Workbook()
     sheet = wb.active
-    sheet.title = 'OLX'
+    sheet.title = 'OLX WYNAJEM'
 
     sheet['A1'] = 'Tytuł'
     sheet['B1'] = 'Cena [zł]'
@@ -59,17 +59,13 @@ def get_next_page_url(soup):
     return None
 
 
-def olx_main():
-    excel_file = "LOKALE.xlsx"
-    wb, sheet = create_excel(excel_file)
-
-    base_url = base_olx_url
-
+def scrape_olx_data(wb, sheet, base_url, olx_locations):
+        
     previous_url = None
     row_number = 2
 
     print("OGŁOSZENIA OLX")
-
+        
     for location, data in olx_locations.items():
         full_url = f"{base_url}{data['path']}?{urlencode(data['params'])}"
 
@@ -123,16 +119,23 @@ def olx_main():
             previous_url = response_url
 
             next_page_url = get_next_page_url(soup)
-
             if not next_page_url:
                 print(f"Brak kolejnej strony dla lokalizacji: {location}.\n")
                 break
 
             full_url = next_page_url
 
+
+def olx_main():
+    excel_file = "LOKALE.xlsx"
+    wb, sheet = create_excel(excel_file)
+
+    scrape_olx_data(wb, sheet, base_olx_url_rent, olx_locations_rent)
+    
+    sheet = wb.create_sheet(title="OLX SPRZEDAŻ")
+    sheet = wb["OLX SPRZEDAŻ"]
+    
+    scrape_olx_data(wb, sheet, base_olx_url_sale, olx_locations_sale)
+
     wb.save(excel_file)
     print("Excel zapisany dla wszystkich lokalizacji OLX.\n")
-
-
-if __name__ == "__main__":
-    olx_main()

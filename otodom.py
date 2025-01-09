@@ -3,15 +3,15 @@ import sys
 import requests
 import openpyxl
 import time
-from otodom_locs import base_otodom_url, locations_otodom
+from otodom_locs import base_otodom_url_rent, base_otodom_url_sale, locations_otodom_rent, locations_otodom_sale
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
 
 
 def create_excel(file_name):
     wb = openpyxl.load_workbook(file_name)
-    sheet = wb.create_sheet(title="OTODOM")
-    sheet = wb["OTODOM"]
+    sheet = wb.create_sheet(title="OTODOM WYNAJEM")
+    sheet = wb["OTODOM WYNAJEM"]
 
     sheet['A1'] = 'Tytuł'
     sheet['B1'] = 'Cena [zł]'
@@ -76,12 +76,8 @@ def get_next_page(soup):
     return True
 
 
-def otodom_main():
-    excel_file = "LOKALE.xlsx"
-    wb, sheet = create_excel(excel_file)
-
-    base_url = base_otodom_url
-
+def scrape_otodom_data(wb, sheet, base_url, locations_otodom):
+    
     row_number = 2
 
     print("OGŁOSZENIA OTODOM")
@@ -141,6 +137,19 @@ def otodom_main():
 
             page_number += 1
             time.sleep(1)
+
+
+def otodom_main():
+    excel_file = "LOKALE.xlsx"
+    wb, sheet = create_excel(excel_file)
+
+    scrape_otodom_data(wb, sheet, base_otodom_url_rent, locations_otodom_rent)
+  
+    sheet = wb.create_sheet(title="OTODOM SPRZEDAŻ")
+    sheet = wb["OTODOM SPRZEDAŻ"]  
+    
+    scrape_otodom_data(wb, sheet, base_otodom_url_sale, locations_otodom_sale)
+
 
     wb.save(excel_file)
     print("Excel zapisany dla wszystkich lokalizacji OTODOM.\n")
