@@ -62,7 +62,7 @@ def url_site(soup):
 
 
 def get_next_page(soup):
-    pagination = soup.find('ul', {'data-cy': 'frontend.search.base-pagination.nexus-pagination'})
+    pagination = soup.find('div', {'class': 'css-18budxx e1h66krm0'})
     if not pagination:
         print("Brak kolejnej strony. Zakończono przetwarzanie.\n")
         return False
@@ -77,7 +77,7 @@ def get_next_page(soup):
 
 
 def scrape_otodom_data(wb, sheet, base_url, locations_otodom):
-    
+
     row_number = 2
 
     print("OGŁOSZENIA OTODOM")

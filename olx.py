@@ -24,7 +24,7 @@ def create_excel(file_name):
 
 
 def title(soup):
-    title_element = soup.find_all('h6', {'class': 'css-1wxaaza'})
+    title_element = soup.find_all('h4', {'class': 'css-1s3qyje'})
     print(f"Znaleziono {len(title_element)} ogłoszeń")
     return [title.text for title in title_element]
 
@@ -42,7 +42,7 @@ def loc(soup):
 
 
 def area(soup):
-    area_element = soup.find_all('span', {'class': 'css-643j0o'})
+    area_element = soup.find_all('span', {'class': 'css-1cd0guq'})
     return [area.text.split('-')[0].split('m')[0] if 'm' in area.text else '' for area in area_element]
 
 
@@ -60,12 +60,12 @@ def get_next_page_url(soup):
 
 
 def scrape_olx_data(wb, sheet, base_url, olx_locations):
-        
+
     previous_url = None
     row_number = 2
 
     print("OGŁOSZENIA OLX")
-        
+ 
     for location, data in olx_locations.items():
         full_url = f"{base_url}{data['path']}?{urlencode(data['params'])}"
 
@@ -131,10 +131,10 @@ def olx_main():
     wb, sheet = create_excel(excel_file)
 
     scrape_olx_data(wb, sheet, base_olx_url_rent, olx_locations_rent)
-    
+
     sheet = wb.create_sheet(title="OLX SPRZEDAŻ")
     sheet = wb["OLX SPRZEDAŻ"]
-    
+
     scrape_olx_data(wb, sheet, base_olx_url_sale, olx_locations_sale)
 
     wb.save(excel_file)
