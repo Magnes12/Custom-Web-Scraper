@@ -25,7 +25,9 @@ def create_excel(file_name):
 
 def title(soup):
     title_element = soup.find_all('p', {'data-cy': 'listing-item-title', 'class': 'css-u3orbr e1g5xnx10'})
-    print(f"Znaleziono {len(title_element)} ogłoszeń")
+    print(f"Znaleziono {len(title_element)} ogłoszeń. \n")
+    if len(title_element) <= 3:
+        return []
     return [title.text for title in title_element]
 
 
@@ -40,7 +42,6 @@ def loc(soup):
 
 
 def area(soup):
-    # Find all the dl tags containing area information
     dl_elements = soup.find_all('dl', {'class': 'css-12dsp7a e1clni9t1'})
 
     areas = []
@@ -80,8 +81,6 @@ def scrape_otodom_data(wb, sheet, base_url, locations_otodom):
 
     row_number = 2
 
-    print("OGŁOSZENIA OTODOM")
-
     for location, data in locations_otodom.items():
         page_number = 1
         while True:
@@ -103,9 +102,11 @@ def scrape_otodom_data(wb, sheet, base_url, locations_otodom):
 
             soup = BeautifulSoup(response.text, 'html.parser')
 
-            print(f"Lokalizacja: {location}")
             print(f"Strona: {page_number}")
+
             title_text = title(soup)
+            if not title_text:
+                break
             price_text = price(soup)
             loc_text = loc(soup)
             area_text = area(soup)
@@ -143,17 +144,25 @@ def otodom_main():
     excel_file = "LOKALE.xlsx"
     wb, sheet = create_excel(excel_file)
 
+    print("OGŁOSZENIA OTODOM WYNAJEM. \n")
     scrape_otodom_data(wb, sheet, base_otodom_url_rent, locations_otodom_rent)
-  
+
     sheet = wb.create_sheet(title="OTODOM SPRZEDAŻ")
-    sheet = wb["OTODOM SPRZEDAŻ"]  
-    
+    sheet = wb["OTODOM SPRZEDAŻ"]
+
+    sheet['A1'] = 'Tytuł'
+    sheet['B1'] = 'Cena [zł]'
+    sheet['C1'] = 'Lokacja'
+    sheet['D1'] = 'Powierzchnia [m2]'
+    sheet['E1'] = 'URL'
+
+    print("OGŁOSZENIA OTODOM SPRZEDAŻ. \n")
     scrape_otodom_data(wb, sheet, base_otodom_url_sale, locations_otodom_sale)
 
-
     wb.save(excel_file)
-    print("Excel zapisany dla wszystkich lokalizacji OTODOM.\n")
+    print("Excel zapisany dla OTODOM.\n")
 
     if sys.platform == "win32":
         print("Otwieram plik excel")
         os.startfile(excel_file)
+        print("Pozdrawia M@GN3s.\n")

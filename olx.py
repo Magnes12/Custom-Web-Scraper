@@ -1,8 +1,8 @@
-import os
 import sys
 import requests
 import openpyxl
 import time
+import urllib.parse
 from olx_locs import olx_locations_rent, base_olx_url_rent, olx_locations_sale, base_olx_url_sale
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlencode
@@ -25,7 +25,7 @@ def create_excel(file_name):
 
 def title(soup):
     title_element = soup.find_all('h4', {'class': 'css-1s3qyje'})
-    print(f"Znaleziono {len(title_element)} ogłoszeń")
+    print(f"Znaleziono {len(title_element)} ogłoszeń. \n")
     return [title.text for title in title_element]
 
 
@@ -64,8 +64,6 @@ def scrape_olx_data(wb, sheet, base_url, olx_locations):
     previous_url = None
     row_number = 2
 
-    print("OGŁOSZENIA OLX")
- 
     for location, data in olx_locations.items():
         full_url = f"{base_url}{data['path']}?{urlencode(data['params'])}"
 
@@ -88,8 +86,10 @@ def scrape_olx_data(wb, sheet, base_url, olx_locations):
                 print("Brak kolejnej strony. Zakończono przetwarzanie.\n")
                 break
 
-            print(f"Lokalizacja: {location}")
-            print(f"Strona: {response_url}")
+            parsed_url = urllib.parse.urlparse(response_url)
+            query_params = urllib.parse.parse_qs(parsed_url.query)
+            page = query_params.get('page', ['1'])[0]
+            print(f"Strona: {page}")
 
             title_text = title(soup)
             price_text = price(soup)
@@ -120,7 +120,7 @@ def scrape_olx_data(wb, sheet, base_url, olx_locations):
 
             next_page_url = get_next_page_url(soup)
             if not next_page_url:
-                print(f"Brak kolejnej strony dla lokalizacji: {location}.\n")
+                print(f"Brak kolejnej strony.\n")
                 break
 
             full_url = next_page_url
@@ -130,12 +130,20 @@ def olx_main():
     excel_file = "LOKALE.xlsx"
     wb, sheet = create_excel(excel_file)
 
+    print("OGŁOSZENIA OLX WYNAJEM. \n")
     scrape_olx_data(wb, sheet, base_olx_url_rent, olx_locations_rent)
 
     sheet = wb.create_sheet(title="OLX SPRZEDAŻ")
     sheet = wb["OLX SPRZEDAŻ"]
+  
+    sheet['A1'] = 'Tytuł'
+    sheet['B1'] = 'Cena [zł]'
+    sheet['C1'] = 'Lokacja'
+    sheet['D1'] = 'Powierzchnia [m2]'
+    sheet['E1'] = 'URL'
 
+    print("OGŁOSZENIA OLX SPRZEDAŻ. \n")
     scrape_olx_data(wb, sheet, base_olx_url_sale, olx_locations_sale)
 
     wb.save(excel_file)
-    print("Excel zapisany dla wszystkich lokalizacji OLX.\n")
+    print("Excel zapisany dla OLX.\n")

@@ -7,8 +7,7 @@ locations_otodom_sale = {
         "params": {
             'limit': '36',
             'ownerTypeSingleSelect': 'ALL',
-            'priceMax': '750000',
-            'by': 'BEST_MATCH',
+            'by': 'DEFAULT',
             'direction': 'DESC',
             'viewType': 'listing',
             'areaMin': '50',
@@ -21,8 +20,7 @@ locations_otodom_rent = {
         "params": {
             'limit': '36',
             'ownerTypeSingleSelect': 'ALL',
-            'priceMax': '750000',
-            'by': 'BEST_MATCH',
+            'by': 'DEFAULT',
             'direction': 'DESC',
             'viewType': 'listing',
             'areaMin': '50',
